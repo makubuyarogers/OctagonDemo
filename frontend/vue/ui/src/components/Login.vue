@@ -41,6 +41,7 @@ export default {
       }
     const response= await axios.post('http://127.0.0.1:8000/api/auth/login',data);
     localStorage.setItem('token',response.data.token);
+    localStorage.setItem('user',response.data.user);
     this.$router.push('/profile');
     }
   }

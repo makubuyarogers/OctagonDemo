@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
 
+    //Getting all registered Users
     public function users()
     {
         //Fetching all users
@@ -24,16 +25,21 @@ class AuthController extends Controller
         }
     }
 
+    //Function for registering User
     public function store(Request $request)
     {
         try {
+            
+            //Adding User to database
             $user=User::create([
                 'first_name'=>$request->first_name,
                 'last_name'=>$request->last_name,
                 'phone_number'=>$request->phone_number,
                 'password'=> Hash::make($request->password)
             ]);
+            //Generating User Access token
             $user->createToken('authToken')->accessToken;
+            //Returning http response 
             return response()->json([
                 'status'=>true,
                 'message'=>'User created sucessfully',
@@ -50,15 +56,18 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-        //Request validation
+        
         try {
+            //Request validation for login form
             $login_request=$request->validate([
                 'phone_number'=>'required|string',
                 'password'=>'required|string'
             ]);
+            //Checking if User exists in database
             if(!Auth::attempt($login_request)){
                 return response(['message'=>'Ivalid Login Credentials']);
             }
+            //Otherwise if the user exists, a token is generated
             $_token = Auth::user()->createToken('authToken')->accessToken;
             return response(['user'=>Auth::user(),'access_token'=>$_token]);
         } catch (\Throwable $th) {
@@ -78,6 +87,7 @@ class AuthController extends Controller
             return response($user, 200);
         } 
         else {
+            //Returning User
             return response()->json([
               "message" => "User not found"
             ], 404);

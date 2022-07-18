@@ -2,7 +2,8 @@
   <div id="container">
     <div class="header">
       <h2 v-if="!user">Welcome</h2>
-      <h2 v-if="user">Welcome {{user.first_name}}</h2>
+      <h2 v-if="user">Welcome {{user.first_name}} {{user.first_name}}</h2>
+      <h3 v-if="user">Phone number: {{user.phone_number}}</h3>
     </div>
   </div>
 </template>
@@ -16,10 +17,12 @@ export default {
       user:null
     }
   },
-  async getUser() {
-    const response= await axios.get('http://127.0.0.1:8000/api/auth/profile/4',{
+  async created() {
+    const id=localStorage.getItem('user.id')
+    const response= await axios.get('http://127.0.0.1:8000/api/auth/profile/',{
+        params: { id },
         headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('token')
+            Authorization: 'Bearer ' +localStorage.getItem('token')
         }
     });
     this.user = response.data;
